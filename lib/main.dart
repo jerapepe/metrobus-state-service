@@ -38,6 +38,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<Map<String, String>> data = [];
+  String? hora;
 
   @override
   void initState() {
@@ -46,54 +47,73 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _scrapeData() async {
-    data = await scrapeData();
-    setState(() {});
+    final result = await scrapeData();
+    setState(() {
+      data = result.data;
+      hora = result.hora;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Web Scraping App'),
+        title: const Text('Estado del servicio'),
       ),
       body: data.isEmpty
           ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: DataTable(
-                  columns: _createColumns(),
-                  rows: _createRows(),
+          : Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('Hora de actualización: $hora',
+                      style:
+                          TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                 ),
-              ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: data.length,
+                    itemBuilder: (context, index) {
+                      final row = data[index];
+                      final linea = row['Linea'] ?? 'Línea desconocida';
+                      final estadoServicio =
+                          row['Estado'] ?? 'Estado desconocido';
+                      final lineasAfectadas =
+                          (row['Estaciones afectadas'] ?? '').split(',');
+                      final infoAdicional = row['Información adicional'] ?? '';
+                      return Card(
+                        child: Column(
+                          children: [
+                            ListTile(
+                              leading: Image.asset('images/$linea.png',
+                                  width: 24, height: 24),
+                              title: Text(row['Linea']!),
+                              subtitle: Text(row['Estado']!),
+                            ),
+                            if (row['Estaciones afectadas']!.isNotEmpty)
+                              Wrap(
+                                spacing: 8.0,
+                                runSpacing: 4.0,
+                                children: row['Estaciones afectadas']!
+                                    .split(',')
+                                    .map((linea) => Chip(
+                                          label: Text(linea.trim()),
+                                        ))
+                                    .toList(),
+                              ),
+                            if (row['Información adicional']!.isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Text(row['Información adicional']!),
+                              ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
     );
-  }
-
-  List<DataColumn> _createColumns() {
-    if (data.isNotEmpty) {
-      return data[0]
-          .keys
-          .where((columnTitle) => columnTitle != 'Línea')
-          .map((columnTitle) => DataColumn(label: Text(columnTitle)))
-          .toList();
-    }
-    return [];
-  }
-
-  List<DataRow> _createRows() {
-    return data.map((row) {
-      return DataRow(
-        cells: row.entries.where((entry) => entry.key != 'Línea').map((cell) {
-          return DataCell(
-            Padding(
-              padding: const EdgeInsets.all(0.5),
-              child: Text(cell.value),
-            ),
-          );
-        }).toList(),
-      );
-    }).toList();
   }
 }
