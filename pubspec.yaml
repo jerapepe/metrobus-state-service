@@ -1,5 +1,5 @@
-name: fluttermetrobus
-description: A new Flutter project.
+name: estadometrobus
+description: La aplicación móvil "Estado del Metrobús CDMX" está diseñada para proporcionar a los usuarios información actualizada sobre el estado del servicio del Metrobús en la Ciudad de México. Esta herramienta útil permite a los viajeros verificar rápidamente el estado de las líneas y estaciones del Metrobús, asegurándose de que puedan planificar sus viajes de manera eficiente y evitar interrupciones inesperadas.
 publish_to: 'none'
 version: 0.1.0
 

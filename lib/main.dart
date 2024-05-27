@@ -20,7 +20,7 @@ class MainApp extends StatelessWidget {
     final themeProvider = Provider.of<ThemeProvider>(context);
 
     return MaterialApp(
-      title: 'Web Scraping App',
+      title: 'Estado metrobus',
       themeMode: themeProvider.themeMode,
       darkTheme: ThemeData.dark(),
       theme: ThemeData.light(),
@@ -64,13 +64,19 @@ class _HomePageState extends State<HomePage> {
           ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text('Hora de actualización: $hora',
-                      style:
-                          TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text('Hora de actualización: $hora',
+                          style: TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.bold)),
+                    ),
+                    Spacer(),
+                    IconButton(
+                        onPressed: _scrapeData, icon: Icon(Icons.refresh)),
+                  ],
                 ),
-                IconButton(onPressed: _scrapeData, icon: Icon(Icons.refresh)),
                 Expanded(
                   child: ListView.builder(
                     itemCount: data.length,
@@ -86,7 +92,7 @@ class _HomePageState extends State<HomePage> {
                         child: Column(
                           children: [
                             ListTile(
-                              leading: Image.asset('images/$linea.png',
+                              leading: Image.asset('assets/images/$linea.png',
                                   width: 24, height: 24),
                               title: Text(row['Linea']!),
                               subtitle: Text(row['Estado']!),
