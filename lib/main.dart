@@ -70,6 +70,7 @@ class _HomePageState extends State<HomePage> {
                       style:
                           TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                 ),
+                IconButton(onPressed: _scrapeData, icon: Icon(Icons.refresh)),
                 Expanded(
                   child: ListView.builder(
                     itemCount: data.length,
